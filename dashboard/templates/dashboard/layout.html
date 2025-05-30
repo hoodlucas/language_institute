@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Language Institute{% endblock %}</title>
+</head>
+<body>
+    <header style="padding: 10px; border-bottom: 1px solid #ccc;">
+        <h2>Language Institute</h2>
+        {% if user.is_authenticated %}
+            Logged in as {{ user.username }} |
+            <a href="{% url 'teacher_dashboard' %}">Dashboard</a> |
+            <a href="{% url 'logout_teacher' %}">Logout</a>
+        {% endif %}
+    </header>
+
+    <main style="padding: 20px;">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer style="padding: 10px; border-top: 1px solid #ccc; text-align: center;">
+        <p>&copy; {{ now|date:"Y" }} Lucas Hood / CS50 Project</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends "dashboard/layout.html" %}
+
+{% block title %}Create Course{% endblock %}
+
+{% block content %}
+    <h1>Create a New Course</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Course Name:</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label>Description:</label><br>
+        <textarea name="description"></textarea><br><br>
+
+        <h3>Schedules:</h3>
+        <div id="schedule-container">
+            <div class="schedule-entry">
+                <select name="day" required>
+                    <option value="">-- Select day --</option>
+                    <option>Monday</option>
+                    <option>Tuesday</option>
+                    <option>Wednesday</option>
+                    <option>Thursday</option>
+                    <option>Friday</option>
+                    <option>Saturday</option>
+                    <option>Sunday</option>
+                </select>
+                <input type="time" name="start_time" required>
+                to
+                <input type="time" name="end_time" required>
+                <br><br>
+            </div>
+        </div>
+
+        <button type="button" onclick="addSchedule()">+ Add Another Schedule</button><br><br>
+
+        <button type="submit">Create Course</button>
+    </form>
+
+    <script>
+        function addSchedule() {
+            const container = document.getElementById("schedule-container");
+            const html = `
+                <div class="schedule-entry">
+                    <select name="day" required>
+                        <option value="">-- Select day --</option>
+                        <option>Monday</option>
+                        <option>Tuesday</option>
+                        <option>Wednesday</option>
+                        <option>Thursday</option>
+                        <option>Friday</option>
+                        <option>Saturday</option>
+                        <option>Sunday</option>
+                    </select>
+                    <input type="time" name="start_time" required>
+                    to
+                    <input type="time" name="end_time" required>
+                    <button type="button" onclick="this.parentElement.remove()">❌ Remove</button>
+                    <br><br>
+                </div>`;
+            container.insertAdjacentHTML("beforeend", html);
+        }
+    </script>
+
+    <p><a href="{% url 'teacher_dashboard' %}">← Back to Dashboard</a></p>
+{% endblock %}

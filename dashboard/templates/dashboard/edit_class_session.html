@@ -1,0 +1,24 @@
+{% extends "dashboard/layout.html" %}
+
+{% block title %}Create Course{% endblock %}
+
+{% block content %}
+    <title>Edit Session</title>
+</head>
+<body>
+    <h1>Edit Class Session</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Date:</label><br>
+        <input type="date" name="date" value="{{ session.date }}" required><br><br>
+
+        <label>Topic:</label><br>
+        <input type="text" name="topic" value="{{ session.topic }}"><br><br>
+
+        <label>Note:</label><br>
+        <textarea name="note" rows="5" cols="40">{{ session.note }}</textarea><br><br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+    <p><a href="{% url 'course_sessions' session.course.id %}">← Back to Sessions</a></p>
+{% endblock %}

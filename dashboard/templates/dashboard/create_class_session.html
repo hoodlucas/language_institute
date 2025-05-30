@@ -1,0 +1,32 @@
+{% extends "dashboard/layout.html" %}
+
+{% block title %}Create Class Session{% endblock %}
+
+{% block content %}
+    <h1>Create Class Session</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="course">Course:</label><br>
+        <select name="course" required>
+            <option value="">-- Select Course --</option>
+            {% for course in courses %}
+                <option value="{{ course.id }}" {% if selected_course and course.id == selected_course.id %}selected{% endif %}>
+                    {{ course.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="date">Date:</label><br>
+        <input type="date" name="date" required><br><br>
+
+        <label for="topic">Topic:</label><br>
+        <input type="text" name="topic"><br><br>
+
+        <label for="note">Note:</label><br>
+        <textarea name="note" rows="5" cols="40"></textarea><br><br>
+
+        <button type="submit">Save Session</button>
+    </form>
+
+    <p><a href="{% url 'teacher_dashboard' %}">Back to Dashboard</a></p>
+{% endblock %}
