@@ -1,0 +1,103 @@
+{% extends "dashboard/layout.html" %}
+
+{% block title %}Take Attendance{% endblock %}
+
+{% block main_class %}dashboard-background{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="col-md-10 col-lg-8">
+
+    <h2 class="mb-4 text-center text-primary">
+      <i class="bi bi-check2-square me-2"></i>
+      Take Attendance
+      <br>
+      <small class="text-dark">{{ session.date }} - {{ session.course.name }}</small>
+    </h2>
+
+    <form method="post" class="shadow-sm bg-white p-4 rounded border">
+      {% csrf_token %}
+
+      <div class="table-responsive">
+        <table class="table custom-table text-center align-middle">
+          <thead>
+            <tr>
+              <th>👨‍🎓 Student</th>
+              <th>✅ Present</th>
+              <th>📝 Justified</th>
+            </tr>
+          </thead>
+          <tbody>
+  {% for student in students %}
+  <tr>
+    <td class="text-center">{{ student.first_name }} {{ student.last_name }}</td>
+    <td class="text-center">
+      <input type="checkbox" name="present_{{ student.id }}" class="form-check-input">
+    </td>
+    <td class="text-center">
+      <input type="checkbox" name="justified_{{ student.id }}" class="form-check-input">
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+        </table>
+      </div>
+
+      <br>
+      <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="btn btn-success btn-lg">
+          <i class="bi bi-save2 me-1"></i> Save Attendance
+        </button>
+      </div>
+
+    </form>
+
+    <br>
+    <a href="{% url 'course_detail' session.course.id %}" class="btn btn-outline-secondary">
+            ← Back to Course
+            </a>
+  </div>
+</div>
+
+<style>
+
+  .dashboard-background {
+  background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+  padding: 40px;
+  border-radius: 8px;
+  min-height: calc(100vh - 120px); /* ajusta según header/footer */
+}
+
+  .custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.custom-table thead {
+  background-color: #0277bd;
+  color: white;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+
+table.custom-table td,
+table.custom-table th {
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+</style>
+
+{% endblock %}

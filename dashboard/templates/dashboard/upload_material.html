@@ -1,14 +1,63 @@
 {% extends "dashboard/layout.html" %}
+
 {% block title %}Upload Material{% endblock %}
 
+{% block main_class %}dashboard-background{% endblock %}
+
 {% block content %}
-<h1>Upload Material to {{ session.course.name }} - {{ session.date }}</h1>
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="file" required>
-    <button type="submit">Upload</button>
-</form>
+        <h2 class="text-primary mb-4 text-center">
+        <i class="bi bi-upload me-2"></i>
+        Upload Material <br>
+        <small class="text-dark">{{ session.course.name }} - {{ session.date }}</small>
+        </h2>
 
-<p><a href="{% url 'course_sessions' session.course.id %}">← Back to Sessions</a></p>
+        <form method="post" enctype="multipart/form-data" class="p-4 bg-white border rounded shadow-sm">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="file" class="form-label">📁 Choose a file</label>
+            <br>
+            <input type="file" name="file" id="file" class="form-control" required>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <br>
+            <button type="submit" class="btn btn-primary">
+            <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload
+            </button>
+            <br> <br>
+            <a href="{% url 'course_detail' session.course.id %}" class="btn btn-outline-secondary">
+            ← Back to Sessions
+            </a>
+            
+        </div>
+        </form>
+
+    </div>
+</div>
+
+<style>
+
+.dashboard-background {
+    background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+    padding: 40px;
+    border-radius: 8px;
+    min-height: calc(100vh - 120px); /* ajusta según header/footer */
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.form-control {
+    border-radius: 0.5rem;
+}
+
+.btn {
+    padding: 10px 16px;
+}
+</style>
 {% endblock %}

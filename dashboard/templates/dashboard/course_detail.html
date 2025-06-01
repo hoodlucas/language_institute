@@ -1,0 +1,393 @@
+{% extends "dashboard/layout.html" %}
+
+{% block title %}{{ course.name }} - Course Detail{% endblock %}
+
+{% block main_class %}dashboard-background{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h1 class="mb-2"><i class="bi bi-journal-bookmark"></i> {{ course.name }}</h1>
+  <p class="text-muted">{{ course.description }}</p>
+
+  <hr>
+
+  <!-- Class Sessions -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center bg-light border rounded px-4 py-2 mb-4 shadow-sm">
+      <h3 class="m-0 text-primary"><i class="bi bi-calendar3"></i> Class Sessions</h3>
+      <a href="{% url 'create_class_session' %}?course={{ course.id }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Add Session
+      </a>
+    </div>
+    <br>
+
+    {% if sessions %}
+      {% for session in sessions %}
+        <div class="card session-card border-0 shadow-sm mb-4">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-0">{{ session.date }} - <strong>{{ session.topic }}</strong></h5>
+            </div>
+            <div>
+              <a href="{% url 'edit_class_session' session.id %}" class="btn btn-sm btn-light me-2">✏ Edit</a>
+              <form method="post" action="{% url 'delete_class_session' session.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-light" onclick="return confirm('Are you sure?')">🗑 Delete</button>
+              </form>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="text-muted">{{ session.note }}</p>
+
+            <!-- Materiales adjuntos -->
+            {% if session.materials.all %}
+              <div class="mt-2">
+                <h6 class="material-title">📎 Materials:</h6>
+                <ul class="list-group list-group-flush mb-3">
+                  {% for material in session.materials.all %}
+                    <li class="list-group-item py-2">
+                      <div class="d-flex justify-content-between align-items-center w-100">
+                        <div class="text-truncate" style="max-width: 85%;">
+                          <a href="{{ material.file.url }}" target="_blank" class="material-file d-inline-block text-truncate">
+                            {{ material }}
+                          </a>
+                        </div>
+                        <form method="post" action="{% url 'delete_material' material.id %}" class="ms-2 mb-0">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-outline-danger material-delete-btn" onclick="return confirm('Delete this file?')">🗑</button>
+                        </form>
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="my-3 d-flex flex-wrap gap-2">
+              <a href="{% url 'upload_material' session.id %}" class="btn btn-outline-secondary btn-lg">
+                📁 Upload Material
+              </a> <br>
+              <a href="{% url 'take_attendance' session.id %}" class="btn btn-dark btn-lg">
+                📋 Take Attendance
+              </a>
+            </div>
+
+
+
+            <br>
+            {% if session.attendances.all %}
+              <div class="attendance-container mt-4">
+                <div class="table-responsive">
+                  <table class="table custom-table">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for record in session.attendances.all %}
+                      <tr>
+                        <td>{{ record.student.first_name }} {{ record.student.last_name }}</td>
+                        <td>
+                          {% if record.present %}
+                            <span class="badge bg-success">✅ Present</span>
+                          {% else %}
+                            <span class="badge bg-danger">❌ Absent</span>
+                            {% if record.justified %}
+                              <span class="badge bg-secondary ms-2">Justified</span>
+                            {% endif %}
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            {% else %}
+              <p class="text-muted">No attendance recorded yet.</p>
+            {% endif %}
+          </div>
+        </div>
+        <br>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted">No sessions yet.</p>
+    {% endif %}
+
+
+
+  </div>
+<hr><hr> <br>
+
+  <!-- Student Table -->
+  <div class="mb-5">
+    <h3 class="mb-3">👨‍🎓 Enrolled Students</h3>
+
+    {% if students %}
+      <div class="table-responsive">
+        <table class="table custom-table">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td>{{ student.first_name }} {{ student.last_name }}</td>
+              <td>{{ student.email }}</td>
+              <td>
+                <a href="{% url 'edit_student' student.id %}" class="btn btn-sm btn-outline-primary me-2">✏ Edit</a>
+                <a href="{% url 'remove_student_from_course' course.id student.id %}" class="btn btn-sm btn-outline-danger">🗑 Remove</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <a href="{% url 'add_student_to_course' course.id %}" class="btn btn-success mt-3">➕ Add Student</a>
+    {% else %}
+      <p class="text-muted">No students enrolled.</p>
+    {% endif %}
+  </div>
+  <br>
+
+  <hr>
+
+  <br>
+  <!-- Attendance Summary -->
+  <div class="mb-5">
+  <h3 class="mb-3">📊 Attendance Summary</h3>
+
+  {% if total_sessions > 0 %}
+    <div class="table-responsive">
+        <table class="table custom-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Present</th>
+              <th>Absent</th>
+              <th>Justified</th>
+              <th>Total</th>
+              <th>Attendance %</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for stat in students_stats %}
+            <tr>
+              <td>{{ stat.student.first_name }} {{ stat.student.last_name }}</td>
+              <td>{{ stat.present }}</td>
+              <td>{{ stat.absent }}</td>
+              <td>{{ stat.justified }}</td>
+              <td>{{ total_sessions }}</td>
+              <td>
+                {% if stat.percent >= 75 %}
+                  <span class="badge bg-success px-3 py-2">✅ {{ stat.percent }}%</span>
+                {% elif stat.percent >= 50 %}
+                  <span class="badge bg-warning text-dark px-3 py-2">⚠️ {{ stat.percent }}%</span>
+                {% else %}
+                  <span class="badge bg-danger px-3 py-2">❌ {{ stat.percent }}%</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">No sessions created yet.</p>
+    {% endif %}
+  </div>
+
+  <br>
+  <hr>
+
+<div class="mb-5">
+  <h3 class="mb-4">🧑 Student Grades</h3>
+
+  {% for student in students %}
+    <div class="mb-5">
+      <h5 class="mb-3 text-primary">
+        <i class="bi bi-person-circle me-2"></i>{{ student.first_name }} {{ student.last_name }}
+      </h5>
+
+      <!-- GRADES TABLE -->
+      <div class="table-responsive mb-3">
+        <table class="table custom-table">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for grade in student.grades.all %}
+              {% if grade.course.id == course.id %}
+              <tr>
+                <td><strong>{{ grade.value }}</strong></td>
+                <td>{{ grade.description|default:"—" }}</td>
+              </tr>
+              {% endif %}
+            {% empty %}
+              <tr><td colspan="2" class="text-muted text-center">No grades yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ADD GRADE FORM -->
+      <form method="post" action="{% url 'add_grade' student.id course.id %}" class="mb-4">
+        {% csrf_token %}
+        <div class="row g-2">
+          <div class="col-md-3">
+            <input type="number" name="value" step="0.01" min="0" max="10" required placeholder="Grade" class="form-control">
+          </div>
+          <div class="col-md-6" style="min-width: 400px;">
+            <input type="text" name="description" placeholder="Description (optional)" class="form-control" style="margin-top: 5px; padding: 5px; font-size: 0.7rem;">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+              <i class="bi bi-plus-circle-fill"></i>
+              <span>Add Grade</span>
+            </button>
+          </div>
+        </div>
+        <br><hr><br>
+      </form>
+
+    </div>
+  {% endfor %}
+</div>
+
+  <br>
+  <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-secondary">← Back to Dashboard</a>
+</div>
+
+<style>
+
+.dashboard-background {
+    background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+    padding: 40px;
+    border-radius: 8px;
+    min-height: calc(100vh - 120px); /* ajusta según header/footer */
+    }
+
+.session-card {
+  border: 2px solid #dee2e6;           /* Borde más visible */
+  border-radius: 1rem;                 /* Bordes redondeados */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Suave sombra */
+  padding: 1.5rem;                     /* Espaciado interno */
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.session-card .card-header {
+  border-bottom: 1px solid #ccc;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.8rem 0.8rem 0 0;
+}
+
+.attendance-table {
+  background-color: #fefefe;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.attendance-table table {
+  margin-bottom: 0;
+}
+
+.attendance-table thead {
+  background-color: #f0f0f0;
+}
+
+.attendance-table td, 
+.attendance-table th {
+  padding: 0.5rem 1rem;
+}
+
+.btn-sm {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.6rem;
+}
+
+
+
+/* Título de la sección de materiales */
+.material-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #444;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Lista de archivos subidos */
+.material-file {
+  font-size: 0.9rem;
+  color: #5a5a5a;
+  text-decoration: none;
+}
+
+.material-file:hover {
+  color: #0d6efd;
+  text-decoration: underline;
+}
+
+.material-delete-btn {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.5rem;
+}
+
+.attendance-card {
+  border-left: 5px solid #0d6efd;
+  background-color: #fff;
+  border-radius: 0.75rem;
+}
+
+
+.custom-table {
+  width: 100%;
+  margin: 0 auto 20px auto;
+  border-collapse: collapse;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.custom-table thead {
+  background-color: #0277bd;
+  color: white;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+</style>
+
+{% endblock %}

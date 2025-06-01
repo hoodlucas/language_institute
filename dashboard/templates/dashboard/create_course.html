@@ -1,66 +1,104 @@
 {% extends "dashboard/layout.html" %}
 
 {% block title %}Create Course{% endblock %}
+{% block main_class %}dashboard-background{% endblock %}
 
 {% block content %}
-    <h1>Create a New Course</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label>Course Name:</label><br>
-        <input type="text" name="name" required><br><br>
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="col-md-10 col-lg-8">
 
-        <label>Description:</label><br>
-        <textarea name="description"></textarea><br><br>
+    <h2 class="text-center text-success mb-4">
+      <i class="bi bi-journal-plus me-2"></i> Create New Course
+    </h2>
 
-        <h3>Schedules:</h3>
-        <div id="schedule-container">
-            <div class="schedule-entry">
-                <select name="day" required>
-                    <option value="">-- Select day --</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    <option>Sunday</option>
-                </select>
-                <input type="time" name="start_time" required>
-                to
-                <input type="time" name="end_time" required>
-                <br><br>
-            </div>
+    <br>
+    <form method="post" class="p-4 bg-white border rounded shadow-sm">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">📘 Course Name</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+
+      <br>
+      <div class="mb-4">
+        <label class="form-label fw-bold">📝 Description</label>
+        <textarea name="description" class="form-control" rows="6" style="min-height:160px; width:100%;"></textarea>
+      </div>
+
+      <br>
+      <h3 class="fw-bold mb-3">🗓️ Schedules</h3>
+      <div id="schedule-container">
+        <div class="schedule-entry row align-items-center mb-3">
+          <div class="col-md-4">
+            <select name="day" class="form-select" required>
+              <option value="">-- Select day --</option>
+              <option>Monday</option>
+              <option>Tuesday</option>
+              <option>Wednesday</option>
+              <option>Thursday</option>
+              <option>Friday</option>
+              <option>Saturday</option>
+              <option>Sunday</option>
+            </select>
+          </div>
+            <input type="time" name="start_time" class="form-control" required>
+            to 
+            <input type="time" name="end_time" class="form-control" required>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.schedule-entry').remove()">❌</button>
         </div>
+      </div>
 
-        <button type="button" onclick="addSchedule()">+ Add Another Schedule</button><br><br>
+      <br>
+      <div class="mb-4">
+        <button type="button" onclick="addSchedule()" class="btn btn-outline-secondary btn-sm">
+          ➕ Add Another Schedule
+        </button>
+      </div>
 
-        <button type="submit">Create Course</button>
+      <br>
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-success">📚 Create Course</button>
+        <br> <br>
+        <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-secondary">← Back to Dashboard</a>
+      </div>
     </form>
+  </div>
+</div>
 
-    <script>
-        function addSchedule() {
-            const container = document.getElementById("schedule-container");
-            const html = `
-                <div class="schedule-entry">
-                    <select name="day" required>
-                        <option value="">-- Select day --</option>
-                        <option>Monday</option>
-                        <option>Tuesday</option>
-                        <option>Wednesday</option>
-                        <option>Thursday</option>
-                        <option>Friday</option>
-                        <option>Saturday</option>
-                        <option>Sunday</option>
-                    </select>
-                    <input type="time" name="start_time" required>
-                    to
-                    <input type="time" name="end_time" required>
-                    <button type="button" onclick="this.parentElement.remove()">❌ Remove</button>
-                    <br><br>
-                </div>`;
-            container.insertAdjacentHTML("beforeend", html);
-        }
-    </script>
+<script>
+  function addSchedule() {
+    const container = document.getElementById("schedule-container");
+    const html = `
+    <br>
+      <div class="schedule-entry row align-items-center mb-3">
+        <div class="col-md-4">
+          <select name="day" class="form-select" required>
+            <option value="">-- Select day --</option>
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+            <option>Saturday</option>
+            <option>Sunday</option>
+          </select>
+        </div>
+          <input type="time" name="start_time" class="form-control" required>
+        to
+          <input type="time" name="end_time" class="form-control" required>
+          <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.schedule-entry').remove()">❌</button>
+      </div>`;
+    container.insertAdjacentHTML("beforeend", html);
+  }
+</script>
 
-    <p><a href="{% url 'teacher_dashboard' %}">← Back to Dashboard</a></p>
+<style>
+  .dashboard-background {
+    background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+    padding: 40px;
+    border-radius: 8px;
+    min-height: calc(100vh - 120px);
+  }
+</style>
 {% endblock %}

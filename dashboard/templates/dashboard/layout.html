@@ -1,26 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>{% block title %}Language Institute{% endblock %}</title>
+    <style>
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #3085c2;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h2 {
+            font-size: 1.8rem;
+        }
+
+        header nav {
+            margin-top: 10px;
+        }
+
+        header a {
+            color: #e3f2fd;
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        header a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            flex: 1;
+            padding: 30px 10%;
+        }
+
+        footer {
+            background-color: #f1f1f1;
+            color: #555;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .message {
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .message.error {
+            background-color: #ffdddd;
+            border: 1px solid #cc0000;
+            color: #a10000;
+        }
+
+        .message.success {
+            background-color: #ddffdd;
+            border: 1px solid #00aa00;
+            color: #006600;
+        }
+    </style>
 </head>
 <body>
-    <header style="padding: 10px; border-bottom: 1px solid #ccc;">
-        <h2>Language Institute</h2>
-        {% if user.is_authenticated %}
-            Logged in as {{ user.username }} |
-            <a href="{% url 'teacher_dashboard' %}">Dashboard</a> |
-            <a href="{% url 'logout_teacher' %}">Logout</a>
-        {% endif %}
+
+    <header>
+        <div class="container">
+            <h2>Language Institute</h2>
+            {% if user.is_authenticated %}
+                <nav>
+                    Logged in as <strong>{{ user.username }}</strong> |
+                    <a href="{% url 'teacher_dashboard' %}">🏠 Dashboard</a>
+                    <a href="{% url 'students_list' %}">👨‍🎓 Students</a>
+                    <a href="{% url 'logout_teacher' %}">🚪 Logout</a>
+                </nav>
+            {% endif %}
+        </div>
     </header>
 
-    <main style="padding: 20px;">
+    <main class="{% block main_class %}{% endblock %}" style="padding: 20px;">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer style="padding: 10px; border-top: 1px solid #ccc; text-align: center;">
+    <footer>
         <p>&copy; {{ now|date:"Y" }} Lucas Hood / CS50 Project</p>
     </footer>
+
 </body>
 </html>

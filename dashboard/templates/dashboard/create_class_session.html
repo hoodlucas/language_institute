@@ -1,32 +1,67 @@
 {% extends "dashboard/layout.html" %}
 
 {% block title %}Create Class Session{% endblock %}
+{% block main_class %}dashboard-background{% endblock %}
 
 {% block content %}
-    <h1>Create Class Session</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="course">Course:</label><br>
-        <select name="course" required>
-            <option value="">-- Select Course --</option>
-            {% for course in courses %}
-                <option value="{{ course.id }}" {% if selected_course and course.id == selected_course.id %}selected{% endif %}>
-                    {{ course.name }}
-                </option>
-            {% endfor %}
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="col-md-10 col-lg-8">
+
+    <h2 class="text-center text-info mb-4">
+      <i class="bi bi-calendar-plus me-2"></i> Create Class Session
+    </h2>
+
+    <form method="post" class="p-4 bg-white border rounded shadow-sm">
+      {% csrf_token %}
+
+      <br>
+      <div class="mb-3">
+        <label for="course" class="form-label fw-bold">📘 Course</label>
+        <select name="course" id="course" class="form-select" required>
+          <option value="">-- Select Course --</option>
+          {% for course in courses %}
+            <option value="{{ course.id }}" {% if selected_course and course.id == selected_course.id %}selected{% endif %}>
+              {{ course.name }}
+            </option>
+          {% endfor %}
         </select>
+      </div>
 
-        <label for="date">Date:</label><br>
-        <input type="date" name="date" required><br><br>
+      <br>
+      <div class="mb-3">
+        <label for="date" class="form-label fw-bold">📅 Date</label>
+        <input type="date" name="date" id="date" class="form-control" required>
+      </div>
 
-        <label for="topic">Topic:</label><br>
-        <input type="text" name="topic"><br><br>
+      <br>
+      <div class="mb-3">
+        <label for="topic" class="form-label fw-bold">🎯 Topic</label>
+        <input type="text" name="topic" id="topic" class="form-control" placeholder="Optional">
+      </div>
 
-        <label for="note">Note:</label><br>
-        <textarea name="note" rows="5" cols="40"></textarea><br><br>
+      <br>
+      <label for="note" class="form-label fw-bold">📝 Note</label>
+      <div class="mb-4">
+        <textarea name="note" id="note" class="form-control" rows="5" placeholder="Additional notes..."></textarea>
+      </div>
 
-        <button type="submit">Save Session</button>
+      <br>
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-info text-white">💾 Save Session</button>
+      </div>
+      <br>
+      <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-secondary">← Back to Dashboard</a>
     </form>
 
-    <p><a href="{% url 'teacher_dashboard' %}">Back to Dashboard</a></p>
+  </div>
+</div>
+
+<style>
+  .dashboard-background {
+    background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+    padding: 40px;
+    border-radius: 8px;
+    min-height: calc(100vh - 120px);
+  }
+</style>
 {% endblock %}

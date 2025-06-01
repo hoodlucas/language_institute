@@ -1,24 +1,62 @@
 {% extends "dashboard/layout.html" %}
 
-{% block title %}Create Course{% endblock %}
+{% block title %}Edit Session{% endblock %}
+
+{% block main_class %}dashboard-background{% endblock %}
 
 {% block content %}
-    <title>Edit Session</title>
-</head>
-<body>
-    <h1>Edit Class Session</h1>
-    <form method="post">
+<div class="container d-flex justify-content-center">
+    <div class="col-md-8 col-lg-6 mt-4">
+
+        <h2 class="mb-4 text-primary text-center">
+        <i class="bi bi-pencil-square me-2"></i> Edit Class Session
+        </h2>
+
+        <form method="post" class="p-4 shadow-sm rounded bg-white border">
         {% csrf_token %}
-        <label>Date:</label><br>
-        <input type="date" name="date" value="{{ session.date }}" required><br><br>
+        
+        <br>
+        <div class="mb-3">
+            <label for="date" class="form-label">📅 Date</label>
+            <input type="date" id="date" name="date" value="{{ session.date }}" class="form-control" required>
+        </div>
 
-        <label>Topic:</label><br>
-        <input type="text" name="topic" value="{{ session.topic }}"><br><br>
+        <br>
+        <div class="mb-3">
+            <label for="topic" class="form-label">📚 Topic</label>
+            <input type="text" id="topic" name="topic" value="{{ session.topic }}" class="form-control" placeholder="e.g. Vocabulary practice">
+        </div>
+        <br>
+        <label for="note" class="form-label">📝 Notes</label>
+        <div class="mb-4">
+            <br>
+            <textarea id="note" name="note" rows="5" class="form-control" style="min-height:160px; width:600px;" placeholder="Additional information...">{{ session.note }}</textarea>
+            
+        </div>
 
-        <label>Note:</label><br>
-        <textarea name="note" rows="5" cols="40">{{ session.note }}</textarea><br><br>
+        <div class="d-flex justify-content-between">
+        
+            <br>
+            <button type="submit" class="btn btn-success">
+            💾 Save Changes
+            </button>
+            <br> <br>
+            <a href="{% url 'course_detail' session.course.id %}" class="btn btn-outline-secondary">
+            ← Back to Course
+            </a>
+        </div>
+        </form>
 
-        <button type="submit">Save Changes</button>
-    </form>
-    <p><a href="{% url 'course_sessions' session.course.id %}">← Back to Sessions</a></p>
+    </div>
+</div>
+
+
+<style>
+    .dashboard-background {
+    background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+    padding: 40px;
+    border-radius: 8px;
+    min-height: calc(100vh - 120px); /* ajusta según header/footer */
+}
+</style>
 {% endblock %}

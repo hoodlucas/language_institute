@@ -1,0 +1,97 @@
+{% extends "dashboard/layout.html" %}
+
+{% block main_class %}dashboard-background{% endblock %}
+
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="col-md-10 col-lg-8">
+
+    <h2 class="text-center text-primary mb-4">
+      <i class="bi bi-person-plus-fill me-2"></i> Add New Student
+    </h2>
+
+    <form method="post" class="p-4 bg-white border rounded shadow-sm">
+  {% csrf_token %}
+
+  <div class="row mb-3 align-items-center">
+      <label for="first_name" class="col-sm-3 col-form-label text-end">First Name</label>
+      <div class="col-sm-9">
+        <input type="text" name="first_name" id="first_name" class="form-control" required placeholder="John">
+      </div>
+    </div>
+
+    <div class="row mb-3 align-items-center">
+      <label for="last_name" class="col-sm-3 col-form-label text-end">Last Name</label>
+      <div class="col-sm-9">
+        <input type="text" name="last_name" id="last_name" class="form-control" required placeholder="Smith">
+      </div>
+    </div>
+
+    <div class="row mb-3 align-items-center">
+      <label for="email" class="col-sm-3 col-form-label text-end">Email</label>
+      <div class="col-sm-9">
+        <input type="email" name="email" id="email" class="form-control" required placeholder="john@example.com">
+      </div>
+    </div>
+
+    <div class="row mb-4 align-items-center">
+      <label for="phone" class="col-sm-3 col-form-label text-end">Phone</label>
+      <div class="col-sm-9">
+        <input type="text" name="phone" id="phone" class="form-control" placeholder="123456789">
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <label class="col-sm-3 col-form-label text-end">Assign to Course(s)</label>
+      <div class="col-sm-9">
+        {% for course in courses %}
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="courses" value="{{ course.id }}" id="course{{ course.id }}">
+            <label class="form-check-label" for="course{{ course.id }}">{{ course.name }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-sm-12 text-center">
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-person-check-fill me-1"></i> Save Student
+        </button>
+      </div>
+    </div>
+  </form>
+
+  </div>
+                <br>
+        <a href="{% url 'students_list' %}" class="btn btn-outline-secondary">← Back to Students
+        </a>
+</div>
+
+
+
+<style>
+
+  .dashboard-background {
+    background: linear-gradient(135deg, #eaf6ff, #fef9ff);
+    padding: 40px;
+    border-radius: 8px;
+    min-height: calc(100vh - 120px); /* ajusta según header/footer */
+    }
+    
+  .form-control {
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .form-check-input {
+    transform: scale(1.1);
+  }
+
+  .btn {
+    padding: 10px 16px;
+  }
+
+{% endblock %}
